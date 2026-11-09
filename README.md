@@ -4,39 +4,44 @@ Test automation framework built with Python and Pytest for QA.
 
 ## Requirements
 
-- Python 3.10+
-- pip
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/) (`brew install uv`)
 
 ## Setup
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install pytest
+uv sync
 ```
 
-## Running the tests
+## Common commands
 
 ```bash
-pytest -v
+uv run pytest -v              # run the tests
+uv run ruff check .           # lint
+uv run ruff format .          # format
 ```
 
 ## Project structure
 
 ```
 .
-├── tests/          # Test cases (coming soon)
-├── README.md
-└── .gitignore
+├── src/qa_framework/   # Framework code: page objects, API clients, utilities
+├── tests/
+│   ├── conftest.py     # Shared fixtures
+│   └── unit/           # Unit and smoke tests
+├── pyproject.toml      # Project metadata, dependencies and tool config
+└── uv.lock             # Locked dependency versions (reproducible installs)
 ```
 
 ## Roadmap
 
-- [ ] Basic unit tests
+- [x] Project scaffold (uv, pytest, ruff)
 - [ ] Fixtures and parametrization
-- [ ] Markers and test organization
-- [ ] Reporting (pytest-html / Allure)
+- [ ] Playwright UI tests with Page Object Model
+- [ ] API tests
 - [ ] CI with GitHub Actions
+- [ ] Reporting and flaky test handling
+- [ ] AI evals
 
 ## Author
 
