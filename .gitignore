@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Testing / reports
+.pytest_cache/
+.coverage
+htmlcov/
+allure-results/
+report.html
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Local scratch
+test1.txt
