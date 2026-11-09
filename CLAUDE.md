@@ -15,6 +15,7 @@ uv sync                                   # create .venv and install from uv.loc
 uv run pytest -v                          # run all tests
 uv run pytest tests/unit/test_smoke.py::test_addition -v   # one test
 uv run pytest -k "addition" -v            # tests by name expression
+uv run pytest -m smoke                    # tests by marker (smoke, regression)
 uv run ruff check .                       # lint (add --fix to autofix)
 uv run ruff format .                      # format (use --check in CI)
 ```
@@ -42,5 +43,6 @@ The owner is learning git, Python, pytest, Playwright, CI/CD, Azure DevOps relea
 
 ## Status
 
-- Done: repo, `main`, scaffold (uv, pytest, ruff, src layout, smoke test) via PR #1.
-- Next: fixtures and parametrization, pre-commit, GitHub Actions CI, Playwright + Page Object Model, API tests, Azure Pipelines comparison, AI evals.
+- Done: repo, `main`, scaffold (uv, pytest, ruff, src layout, smoke test) via PR #1; CLAUDE.md and notes via PRs #2 and #3.
+- Done (uncommitted until the owner commits): `validators.py` as system under test, `make_user` factory fixture in `tests/conftest.py`, parametrized tests with ids and `smoke`/`regression` markers registered in `pyproject.toml`.
+- Next: pre-commit, GitHub Actions CI, Playwright + Page Object Model, API tests, Azure Pipelines comparison, AI evals.
