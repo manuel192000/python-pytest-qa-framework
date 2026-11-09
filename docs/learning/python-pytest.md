@@ -53,6 +53,25 @@ def test_addition(a, b, expected):
 ## conftest.py
 Archivo que pytest carga solo. Contiene fixtures compartidas (navegador abierto, usuario de prueba...).
 
+## uv run: qué hace y cómo elegir qué ejecutar
+
+`uv run <comando>` ejecuta el comando **dentro del entorno virtual del proyecto** (`.venv`), sin que tengas que activarlo. Antes comprueba que el entorno esté al día con `uv.lock` y lo sincroniza si hace falta. Así todos usan las mismas versiones.
+
+| Comando | Qué hace | Cuándo |
+|---|---|---|
+| `uv run pytest` | Ejecuta todos los tests | Antes de commitear |
+| `uv run pytest -v` | Igual, mostrando cada test | Para ver el detalle |
+| `uv run pytest -m smoke` | Solo los tests con ese marker | Chequeo rápido en cada cambio |
+| `uv run pytest -m "regression and not smoke"` | Combina markers | Cobertura amplia sin repetir los rápidos |
+| `uv run pytest -k "no-at"` | Tests cuyo nombre contiene ese texto | Depurar un caso concreto |
+| `uv run pytest archivo.py::test_nombre` | Un solo test exacto | Reproducir un fallo |
+| `uv run ruff check .` | Busca problemas de calidad | Antes de commitear y en CI |
+| `uv run ruff check . --fix` | Corrige solo lo que puede arreglar solo | Para limpiar rápido |
+| `uv run ruff format .` | Reescribe el código con un estilo uniforme | Antes de commitear |
+
+**Pregunta: ¿qué ventaja tiene `uv run` frente a activar el entorno con `source .venv/bin/activate`?**
+Con `uv run` no dependes de acordarte de activar el entorno ni de que esté activado el correcto, que es una fuente clásica de errores ("funciona en mi terminal, no en la tuya"). Además sincroniza el entorno con el lockfile antes de ejecutar, así que nunca corres con dependencias desactualizadas, y es exactamente el mismo comando en tu máquina y en el CI. Con activación manual, el resultado depende del estado de tu terminal.
+
 ## Fixtures
 
 Una fixture es una función que prepara lo que un test necesita (datos, un navegador, una sesión) y se la pides poniendo su nombre como argumento del test. pytest la ejecuta antes y te pasa el resultado.

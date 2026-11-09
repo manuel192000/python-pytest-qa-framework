@@ -36,7 +36,7 @@ uv run ruff format .          # format
 ## Roadmap
 
 - [x] Project scaffold (uv, pytest, ruff)
-- [ ] Fixtures and parametrization
+- [x] Fixtures and parametrization
 - [ ] Playwright UI tests with Page Object Model
 - [ ] API tests
 - [ ] CI with GitHub Actions

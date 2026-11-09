@@ -44,5 +44,7 @@ The owner is learning git, Python, pytest, Playwright, CI/CD, Azure DevOps relea
 ## Status
 
 - Done: repo, `main`, scaffold (uv, pytest, ruff, src layout, smoke test) via PR #1; CLAUDE.md and notes via PRs #2 and #3.
-- Done (uncommitted until the owner commits): `validators.py` as system under test, `make_user` factory fixture in `tests/conftest.py`, parametrized tests with ids and `smoke`/`regression` markers registered in `pyproject.toml`.
-- Next: pre-commit, GitHub Actions CI, Playwright + Page Object Model, API tests, Azure Pipelines comparison, AI evals.
+- Done: `validators.py` as system under test, `make_user` factory fixture in `tests/conftest.py`, parametrized tests with ids and `smoke`/`regression` markers registered in `pyproject.toml` (PR #4, squash-merged). 18 tests pass.
+- Pending: uncommitted edit to `docs/learning/git.md` (merge methods example) and this file; goes in the next PR.
+- Owner currently uses GitHub Desktop plus the web; for now Claude runs git write commands for him (he asked for this temporarily) while explaining each one. Ask him before returning to "he types them".
+- Next: pre-commit (was about to set it up: `.pre-commit-config.yaml` with ruff), GitHub Actions CI, Playwright + Page Object Model, API tests, Azure Pipelines comparison, AI evals.
