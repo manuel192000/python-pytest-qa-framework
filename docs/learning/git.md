@@ -18,6 +18,25 @@ Directorio de trabajo -> `git add` -> staging -> `git commit` -> repo local -> `
 | `git status` | Muestra el estado | Saber dónde estás | Constantemente |
 | `git log --oneline` | Historial resumido | Ver qué se hizo | Para revisar o buscar cambios |
 
+## Anatomía de `git push -u origin <rama>`
+
+```
+git push  -u  origin  ci/add-github-actions
+   │       │     │             │
+   │       │     │             └─ la RAMA que quieres subir (cambia en cada tarea)
+   │       │     └─ el REMOTO a donde subir (casi siempre "origin" = tu repo en GitHub)
+   │       └─ enlaza la rama local con la remota (solo el primer push de esa rama)
+   └─ enviar commits
+```
+
+- `origin` **no cambia**: es el apodo de la URL de tu repo en GitHub (`git remote -v` lo muestra).
+- El último dato es **el nombre de la rama en la que estás**. Por eso al principio fue `main` (estábamos en `main`) y ahora es `ci/add-github-actions`.
+- `git push -u origin main` en un repo nuevo sube `main` por primera vez; en el flujo de equipo ya no se hace porque `main` solo se actualiza uniendo PRs.
+- Para ver en qué rama estás: `git branch --show-current` (o la línea `On branch ...` de `git status`).
+
+**Pregunta: ¿qué pasa si haces `git push` sin argumentos en una rama nueva?**
+Git no sabe a dónde enviarla porque la rama aún no tiene una rama remota enlazada y te muestra un error con la sugerencia exacta: `git push --set-upstream origin <rama>`, que es lo mismo que `-u`. Después de ese primer push enlazado, los siguientes `git push` ya funcionan sin argumentos porque git recuerda el destino.
+
 ## Flujo mínimo vs flujo de equipo
 
 **Mínimo (proyecto personal, trabajando directo en `main`): 3 comandos.**
@@ -43,7 +62,7 @@ Opcional: `git status` antes del commit para ver qué entra (hábito, no obligat
 | `-u` en el primer push | Enlazar rama local y remota | Solo la primera vez |
 | PR (`gh pr create`) | Revisión y CI antes de unir | Políticas de rama de `main` |
 
-`git add .` y `git add -A` hacen lo mismo en las versiones modernas de git (añaden todo lo nuevo, cambiado y borrado). `git add archivo` es más preciso cuando solo quieres commitear parte de los cambios.
+`git add .` añade lo nuevo, cambiado y borrado **en la carpeta actual y sus subcarpetas**. `git add -A` hace lo mismo en **todo el repositorio**, estés donde estés. Desde la raíz del repo son equivalentes. `git add archivo` es más preciso cuando solo quieres commitear parte de los cambios.
 
 **Pregunta: ¿por qué en un equipo no se hace `git push` directo a `main`?**
 Porque `main` es lo que se despliega y debe estar siempre estable. Si cada persona sube directo, un cambio roto o sin revisar llega a todos de inmediato. Con rama y PR, otra persona revisa el cambio, el CI ejecuta los tests y solo entonces se une. En muchos equipos `main` está protegida con una política de rama que bloquea el push directo, y eso es exactamente lo que se exige también en Azure DevOps. En un proyecto personal es opcional, pero practicarlo es lo que se valora en una entrevista.

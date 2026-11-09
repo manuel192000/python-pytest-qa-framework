@@ -31,8 +31,8 @@ touch src/qa_framework/__init__.py
 Configuración elegida: `testpaths = ["tests"]`, `-ra` (resumen de fallos y skips), `--strict-markers` (un marker mal escrito da error), `--strict-config`.
 ```bash
 uv run pytest -v
-uv run pytest tests/unit/test_smoke.py::test_addition -v
-uv run pytest -k addition
+uv run pytest tests/unit/test_validators.py::test_default_user_passes_all_rules -v
+uv run pytest -k email
 ```
 
 ## ruff
