@@ -50,4 +50,6 @@ The owner is learning git, Python, pytest, Playwright, CI/CD, Azure DevOps relea
 - Pending: uncommitted edit to `docs/learning/git.md` (merge methods example) and this file; goes in the next PR.
 - Owner currently uses GitHub Desktop plus the web; for now Claude runs git write commands for him (he asked for this temporarily) while explaining each one. Ask him before returning to "he types them".
 - Done (pending owner's commit/PR): pre-commit with ruff and basic hygiene hooks (`.pre-commit-config.yaml`, hook installed locally). Hooks are pinned (`rev`); keep the ruff hook version equal to the ruff version in `uv.lock`.
-- Next: GitHub Actions CI, Playwright + Page Object Model, API tests, Azure Pipelines comparison, AI evals.
+- Done (pending owner's commit/PR): GitHub Actions workflow `.github/workflows/ci.yml` (ruff check, ruff format --check, pytest via `uv sync --locked`) on pull_request and push to main. Uses the same `uv run` commands as local so CI failures are reproducible.
+- Pre-commit PR (#6) is merged. For now the owner types git write commands himself again; give him the commands and explain each one.
+- Next: branch protection with required CI check, Azure Pipelines comparison, Playwright + Page Object Model, API tests, AI evals.
