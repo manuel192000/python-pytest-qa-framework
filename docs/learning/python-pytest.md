@@ -78,14 +78,16 @@ Una fixture es una función que prepara lo que un test necesita (datos, un naveg
 
 ```python
 @pytest.fixture
-def make_user():                      # tests/conftest.py
+def make_user():  # tests/conftest.py
     def _make(**overrides):
         user = {"email": "qa.user@example.com", "password": "Str0ngPass1", "role": "tester"}
         user.update(overrides)
         return user
+
     return _make
 
-def test_overriding_one_field(make_user):   # pytest inyecta la fixture por nombre
+
+def test_overriding_one_field(make_user):  # pytest inyecta la fixture por nombre
     assert make_user(role="admin")["role"] == "admin"
 ```
 
@@ -113,9 +115,9 @@ uv run pytest -m "regression and not smoke"
 
 ```python
 def test_default_user_passes_all_rules(make_user):
-    user = make_user()                                  # Arrange: preparar
-    errors = password_errors(user["password"])          # Act: ejecutar
-    assert errors == []                                 # Assert: comprobar
+    user = make_user()  # Arrange: preparar
+    errors = password_errors(user["password"])  # Act: ejecutar
+    assert errors == []  # Assert: comprobar
 ```
 Un test, una razón para fallar.
 

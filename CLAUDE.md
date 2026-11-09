@@ -18,6 +18,8 @@ uv run pytest -k "addition" -v            # tests by name expression
 uv run pytest -m smoke                    # tests by marker (smoke, regression)
 uv run ruff check .                       # lint (add --fix to autofix)
 uv run ruff format .                      # format (use --check in CI)
+uv run pre-commit install                 # once per clone: enable the git hook
+uv run pre-commit run --all-files         # run every hook against the whole repo
 ```
 
 ## Architecture
@@ -47,4 +49,5 @@ The owner is learning git, Python, pytest, Playwright, CI/CD, Azure DevOps relea
 - Done: `validators.py` as system under test, `make_user` factory fixture in `tests/conftest.py`, parametrized tests with ids and `smoke`/`regression` markers registered in `pyproject.toml` (PR #4, squash-merged). 18 tests pass.
 - Pending: uncommitted edit to `docs/learning/git.md` (merge methods example) and this file; goes in the next PR.
 - Owner currently uses GitHub Desktop plus the web; for now Claude runs git write commands for him (he asked for this temporarily) while explaining each one. Ask him before returning to "he types them".
-- Next: pre-commit (was about to set it up: `.pre-commit-config.yaml` with ruff), GitHub Actions CI, Playwright + Page Object Model, API tests, Azure Pipelines comparison, AI evals.
+- Done (pending owner's commit/PR): pre-commit with ruff and basic hygiene hooks (`.pre-commit-config.yaml`, hook installed locally). Hooks are pinned (`rev`); keep the ruff hook version equal to the ruff version in `uv.lock`.
+- Next: GitHub Actions CI, Playwright + Page Object Model, API tests, Azure Pipelines comparison, AI evals.

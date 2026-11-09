@@ -148,7 +148,36 @@ Tras un squash, `git branch -d` se niega a borrar la rama local ("not fully merg
 Primero leo la primera línea del error, que casi siempre indica la causa exacta. Después ejecuto `comando --help` para ver la sintaxis correcta, y si sigue sin quedar claro, consulto la documentación oficial. Evito copiar comandos que no entiendo, sobre todo los que reescriben historial o borran ramas. Un senior no memoriza todo: sabe leer el error y encontrar la respuesta rápido.
 
 ## Conventional Commits
-Formato `tipo: descripción`. Tipos: `feat`, `fix`, `chore`, `docs`, `test`, `refactor`.
+Formato `tipo: descripción`. El tipo describe **qué efecto tiene el cambio en el producto**, no si creas o modificas un archivo.
+
+| Tipo | Cuándo | Efecto en la versión (SemVer) | Ejemplo |
+|---|---|---|---|
+| `feat` | Funcionalidad nueva para quien usa el producto/framework | minor | `feat: add login page object` |
+| `fix` | Corrige un bug | patch | `fix: wait for toast before asserting` |
+| `docs` | Solo documentación | ninguno | `docs: update roadmap` |
+| `test` | Añade o ajusta tests sin tocar código de producto | ninguno | `test: add password boundary cases` |
+| `refactor` | Reorganiza código sin cambiar su comportamiento | ninguno | `refactor: extract email regex` |
+| `chore` | Mantenimiento y herramientas de desarrollo (config, dependencias, pre-commit) | ninguno | `chore: add pre-commit with ruff` |
+
+Crear un archivo no lo convierte en `feat`: un README nuevo es `docs`, un `.pre-commit-config.yaml` es `chore`. Pregúntate: "¿cambia lo que hace el producto para quien lo usa?". Si sí, `feat` o `fix`; si no, el tipo que describe el trabajo. Algunos equipos añaden `ci:` (pipelines) y `build:` (empaquetado/dependencias).
+
+## gh pr create: opciones y orden
+
+**El orden es siempre: primero `git push`, después `gh pr create`.** Un PR compara dos ramas **en GitHub**, así que tu rama tiene que existir allí antes. (Si olvidas el push, `gh` suele ofrecerse a hacerlo, pero conviene no depender de eso.)
+
+| Opción | Qué hace |
+|---|---|
+| `--base main` | Rama destino. Es opcional: por defecto usa la rama principal del repo. Se pone para ser explícito, y es necesaria si el destino NO es `main` (por ejemplo una rama `release/1.2`) |
+| `--fill` | Rellena título y descripción con el mensaje de tu commit (o de tus commits) |
+| `--title "..." --body "..."` | Los escribes tú a mano |
+| `--draft` | Lo abre como borrador (aún no listo para revisar) |
+| `--web` | Abre el formulario en el navegador |
+| (sin opciones) | Modo interactivo: te pregunta título y descripción |
+
+No hay una forma única: `--fill` es cómoda para cambios pequeños con buen mensaje de commit; para cambios grandes se escribe un `--title` y `--body` que expliquen el porqué, qué se probó y cómo revisarlo.
+
+**Pregunta: ¿qué escribirías en la descripción de un PR para que sea fácil de revisar?**
+Qué problema resuelve o qué necesidad cubre y por qué se eligió este enfoque; qué cambió a grandes rasgos (para orientar al revisor antes de abrir el diff); cómo se probó (tests ejecutados, pasos manuales); y si hay riesgos, decisiones discutibles o partes que no se tocaron a propósito. Un PR pequeño y enfocado, con descripción clara, se revisa más rápido y con mejor calidad que uno enorme sin contexto.
 
 ## Preguntas de entrevista
 
