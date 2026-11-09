@@ -42,6 +42,36 @@ Squash cuando los commits intermedios del PR son ruido ("fix typo", "wip") y qui
 **Pregunta: ¿qué pasa con los archivos sin commitear al hacer `git switch`?**
 Los archivos nuevos (untracked) siempre te acompañan porque no pertenecen a ninguna rama. Los cambios en archivos ya rastreados también viajan si no chocan con la rama destino; si chocan, git se niega a cambiar y te pide commitear o guardar con `git stash`.
 
+## Errores comunes (y cómo leerlos)
+
+| Error | Causa | Solución |
+|---|---|---|
+| `unknown flag: --delete` | Escribiste `--delete branch` (con espacio). La opción correcta es `--delete-branch`, con guion. Con el espacio, la terminal lee `--delete` como una opción y `branch` como otro argumento. | `gh pr merge 2 --squash --delete-branch` |
+| `no matches found: bonita?` | Pegaste texto normal en la terminal; zsh lo interpretó como comando y el `?` como comodín de archivos. | Pega en la terminal solo comandos. |
+
+| `Your local changes to the following files would be overwritten by checkout` | Tienes cambios sin commitear en un archivo y la rama destino tiene otra versión (o no lo tiene). Git se niega a cambiar para no perder tu trabajo. | Guardarlos con `git stash`, cambiar de rama, y recuperarlos con `git stash pop`. O commitearlos. |
+
+### git stash
+Guarda tus cambios sin commitear en un cajón temporal y deja el directorio limpio.
+
+| Comando | Qué hace |
+|---|---|
+| `git stash` | Guarda los cambios y limpia el directorio |
+| `git stash list` | Lista lo guardado |
+| `git stash pop` | Recupera lo último guardado y lo quita del cajón |
+
+**Cuándo:** necesitas cambiar de rama o hacer `git pull` pero tu trabajo a medias no está listo para un commit.
+
+### Lo que pasó al unir el PR #2
+`gh pr merge` hace dos cosas: une el PR en GitHub y después cambia tu rama local a `main` y borra la rama. El merge en GitHub sí ocurrió, pero el cambio local falló por el error de arriba, así que la rama quedó sin borrar. Un comando puede fallar a medias, por eso hay que comprobar el estado (`gh pr view`, `git status`) antes de repetirlo.
+
+Tras un squash, `git branch -d` se niega a borrar la rama local ("not fully merged"), porque el commit aplastado de `main` es distinto de los commits de tu rama. Se usa `git branch -D`, pero solo después de confirmar que el PR está unido. Para la rama remota: `git push origin --delete nombre-rama`.
+
+**Cómo leer un error de un comando:** el mensaje empieza por la causa (`unknown flag: --delete`). Lo demás suele ser la ayuda del comando. Busca en esa ayuda la opción correcta (`-d, --delete-branch`). Una opción larga lleva dos guiones y una sola palabra unida por guiones; nunca lleva espacios.
+
+**Pregunta: ¿qué haces cuando un comando de git o gh te da un error que no entiendes?**
+Primero leo la primera línea del error, que casi siempre indica la causa exacta. Después ejecuto `comando --help` para ver la sintaxis correcta, y si sigue sin quedar claro, consulto la documentación oficial. Evito copiar comandos que no entiendo, sobre todo los que reescriben historial o borran ramas. Un senior no memoriza todo: sabe leer el error y encontrar la respuesta rápido.
+
 ## Conventional Commits
 Formato `tipo: descripción`. Tipos: `feat`, `fix`, `chore`, `docs`, `test`, `refactor`.
 
