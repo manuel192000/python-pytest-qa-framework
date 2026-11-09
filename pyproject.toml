@@ -22,6 +22,10 @@ packages = ["src/qa_framework"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers --strict-config"
+markers = [
+    "smoke: fast checks of critical behaviour, run on every change",
+    "regression: broader coverage, run before a release",
+]
 
 [tool.ruff]
 line-length = 100

@@ -18,6 +18,36 @@ Directorio de trabajo -> `git add` -> staging -> `git commit` -> repo local -> `
 | `git status` | Muestra el estado | Saber dónde estás | Constantemente |
 | `git log --oneline` | Historial resumido | Ver qué se hizo | Para revisar o buscar cambios |
 
+## Flujo mínimo vs flujo de equipo
+
+**Mínimo (proyecto personal, trabajando directo en `main`): 3 comandos.**
+```
+git add .                  # o: git add archivo
+git commit -m "feat: ..."
+git push
+```
+
+**De equipo (rama + Pull Request): los mismos 3, más 3 pasos que añaden seguridad.**
+```
+git switch -c feat/nombre          # 1. rama nueva (una vez por tarea)
+git add .                          # \
+git commit -m "feat: ..."          #  } los 3 de siempre
+git push -u origin feat/nombre     # /  (-u solo la primera vez de esa rama)
+gh pr create --base main --fill    # 2. pedir revisión
+```
+Opcional: `git status` antes del commit para ver qué entra (hábito, no obligatorio).
+
+| Paso extra | Qué aporta | Quién lo exige |
+|---|---|---|
+| Rama (`switch -c`) | Aislar tu cambio de `main` | Todo equipo |
+| `-u` en el primer push | Enlazar rama local y remota | Solo la primera vez |
+| PR (`gh pr create`) | Revisión y CI antes de unir | Políticas de rama de `main` |
+
+`git add .` y `git add -A` hacen lo mismo en las versiones modernas de git (añaden todo lo nuevo, cambiado y borrado). `git add archivo` es más preciso cuando solo quieres commitear parte de los cambios.
+
+**Pregunta: ¿por qué en un equipo no se hace `git push` directo a `main`?**
+Porque `main` es lo que se despliega y debe estar siempre estable. Si cada persona sube directo, un cambio roto o sin revisar llega a todos de inmediato. Con rama y PR, otra persona revisa el cambio, el CI ejecuta los tests y solo entonces se une. En muchos equipos `main` está protegida con una política de rama que bloquea el push directo, y eso es exactamente lo que se exige también en Azure DevOps. En un proyecto personal es opcional, pero practicarlo es lo que se valora en una entrevista.
+
 ## Unir un Pull Request y sincronizar
 
 Flujo completo de un cambio: `git switch main` -> `git pull` -> `git switch -c rama` -> trabajar -> `git add` -> `git commit` -> `git push -u origin rama` -> `gh pr create` -> merge del PR -> `git switch main` -> `git pull`.
@@ -61,6 +91,16 @@ Guarda tus cambios sin commitear en un cajón temporal y deja el directorio limp
 | `git stash pop` | Recupera lo último guardado y lo quita del cajón |
 
 **Cuándo:** necesitas cambiar de rama o hacer `git pull` pero tu trabajo a medias no está listo para un commit.
+
+### git fetch --prune
+Tu máquina guarda una copia de cómo ve el remoto (`origin/rama`). Esa copia no se actualiza sola cuando alguien borra una rama en GitHub y queda una referencia fantasma (se ve en `git branch -a`).
+- `git fetch` actualiza esa copia con lo que hay en GitHub.
+- `--prune` además elimina las referencias a ramas que ya no existen en el remoto.
+
+**Cuándo:** de vez en cuando, y siempre en equipos que borran la rama tras cada merge. Para hacerlo automático: `git config --global fetch.prune true`.
+
+**Pregunta: ¿qué diferencia hay entre `git fetch` y `git pull`?**
+`fetch` solo descarga y actualiza tu copia del remoto, sin tocar tus archivos ni tu rama: es seguro y te deja revisar antes. `pull` es `fetch` más `merge` (o `rebase`): además integra esos cambios en tu rama actual. Uso `fetch` cuando quiero ver qué hay antes de integrar, y `pull` cuando sé que quiero actualizar mi rama.
 
 ### Lo que pasó al unir el PR #2
 `gh pr merge` hace dos cosas: une el PR en GitHub y después cambia tu rama local a `main` y borra la rama. El merge en GitHub sí ocurrió, pero el cambio local falló por el error de arriba, así que la rama quedó sin borrar. Un comando puede fallar a medias, por eso hay que comprobar el estado (`gh pr view`, `git status`) antes de repetirlo.
