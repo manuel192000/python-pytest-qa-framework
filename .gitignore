@@ -21,6 +21,3 @@ report.html
 .vscode/
 .idea/
 .DS_Store
-
-# Local scratch
-test1.txt

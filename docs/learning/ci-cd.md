@@ -110,6 +110,9 @@ steps:
 | Branch protection + required checks | Branch policies + build validation |
 | Environments con aprobadores | Environments con approvals y checks |
 
+## Qué código prueba el CI en un Pull Request
+El evento `pull_request` no prueba tu rama sola: prueba tu rama **combinada con `main` tal como estaba al dispararse la ejecución**. Si `main` avanza después, ese resultado puede quedar desactualizado. Por eso el workflow también corre en cada `push` a `main`, y por eso existe la opción *Require branches to be up to date before merging*.
+
 ## Comandos útiles
 | Comando | Para qué |
 |---|---|
@@ -117,6 +120,29 @@ steps:
 | `gh pr checks --watch` | Seguirlos en vivo hasta que terminen |
 | `gh run list` | Últimas ejecuciones de workflows |
 | `gh run view --log-failed` | Ver solo los logs de los pasos que fallaron |
+
+## Proteger `main` (rulesets de GitHub)
+
+Sin protección, el CI solo **informa**. Con protección, **bloquea**: es el *quality gate*.
+
+Configuración (Settings → Rules → Rulesets → New branch ruleset):
+
+| Ajuste | Para qué |
+|---|---|
+| Enforcement: **Active** | Que la regla se aplique (en *Disabled* no hace nada) |
+| Target: **Default branch** | Protege `main` |
+| **Restrict deletions** | Nadie puede borrar `main` |
+| **Block force pushes** | Nadie puede reescribir el historial de `main` |
+| **Require a pull request before merging** | Prohíbe el push directo; todo entra por PR |
+| Required approvals: 0 (proyecto personal) | No puedes aprobar tu propio PR; en equipo se pide 1 o más |
+| **Require status checks to pass** + check `Lint and tests` | No se puede unir si el CI está en rojo |
+| Bypass list: vacía | Ni el dueño se salta la regla |
+
+Notas:
+- El check solo aparece en el buscador **después de haberse ejecutado al menos una vez** (por eso primero creamos el CI).
+- Se selecciona por el nombre del job (`Lint and tests`), no por el nombre del archivo.
+- Opcional: *Require branches to be up to date before merging* obliga a que el PR esté actualizado con `main` antes de unir (más seguro, más rebases).
+- Equivalente en Azure DevOps: Branch policies → Build validation + Minimum number of reviewers.
 
 ## Preguntas de entrevista
 

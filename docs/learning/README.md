@@ -11,4 +11,4 @@ Notas de estudio del proyecto: conceptos, configuraciones y preguntas de entrevi
 | [release-management.md](release-management.md) | Pipelines, aprobaciones y releases (Azure DevOps y GitHub Actions) |
 | [claude-code.md](claude-code.md) | Comandos útiles de Claude Code |
 
-Próximos archivos: `playwright.md`, `ci-cd.md`, `api-testing.md`, `ai-evals.md`.
+Próximos archivos: `playwright.md`, `api-testing.md`, `ai-evals.md`.

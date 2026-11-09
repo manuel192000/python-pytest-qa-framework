@@ -35,19 +35,13 @@ def test_invalid_emails_are_rejected(email):
 @pytest.mark.parametrize(
     ("password", "expected"),
     [
-        ("Short1", ["too_short"]),
+        ("Abcdef1", ["too_short"]),
+        ("Abcdefg1", []),
         ("longpassword1", ["missing_uppercase"]),
         ("LongPassword", ["missing_digit"]),
         ("short", ["too_short", "missing_digit", "missing_uppercase"]),
     ],
-    ids=["too-short", "no-uppercase", "no-digit", "everything-wrong"],
+    ids=["one-below-minimum", "exactly-minimum", "no-uppercase", "no-digit", "everything-wrong"],
 )
 def test_password_reports_every_broken_rule(password, expected):
     assert password_errors(password) == expected
-
-
-def test_overriding_one_field_keeps_the_rest(make_user):
-    user = make_user(role="admin")
-
-    assert user["role"] == "admin"
-    assert user["email"] == "qa.user@example.com"

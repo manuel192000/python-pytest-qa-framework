@@ -4,17 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Purpose
 
-Public portfolio project: a Python/Pytest QA automation framework that the owner (Manuel, GitHub `manuel192000`) will defend in SDET interviews. It is meant to grow into Playwright UI tests (Page Object Model), API tests, CI/CD and AI evals. Decisions must be defensible as senior-level and follow modern professional team practices, not generic tutorials. Never use code from the owner's employer in this repo.
+Portfolio project: a Python/Pytest QA automation framework that will grow into Playwright UI tests (Page Object Model), API tests and AI evals. Follow modern professional team practices, and never use code from the owner's employer in this repo.
 
 ## Commands
 
-Package manager is `uv` (installed via Homebrew). Python >= 3.12.
+Package manager is `uv`. Python is pinned in `.python-version`.
 
 ```bash
 uv sync                                   # create .venv and install from uv.lock
 uv run pytest -v                          # run all tests
-uv run pytest tests/unit/test_smoke.py::test_addition -v   # one test
-uv run pytest -k "addition" -v            # tests by name expression
+uv run pytest tests/unit/test_validators.py::test_default_user_passes_all_rules -v   # one test
+uv run pytest -k "email" -v               # tests by name expression
 uv run pytest -m smoke                    # tests by marker (smoke, regression)
 uv run ruff check .                       # lint (add --fix to autofix)
 uv run ruff format .                      # format (use --check in CI)
@@ -24,32 +24,30 @@ uv run pre-commit run --all-files         # run every hook against the whole rep
 
 ## Architecture
 
-- `src/qa_framework/` is the installable package (src layout, built with hatchling). Framework code (page objects, API clients, utilities) goes here, and tests import it as `qa_framework`. Tests must run against the installed package, so always go through `uv run`.
+- `src/qa_framework/` is the installable package (src layout, built with hatchling). Framework code goes here and tests import it as `qa_framework`. Tests must run against the installed package, so always go through `uv run`.
 - `tests/` holds tests only. `tests/conftest.py` is for shared fixtures; tests are grouped by kind (`tests/unit/` now, UI/API/evals later).
-- `pyproject.toml` is the single config for project metadata, dev dependency group, pytest (`--strict-markers --strict-config`: every marker must be registered) and ruff (rules E, F, I, UP, B; line length 100).
-- `uv.lock` is committed and must never be edited by hand.
+- `pyproject.toml` is the single config for metadata (including the only copy of the version), the dev dependency group, pytest (`--strict-markers --strict-config`: every marker must be registered) and ruff.
+- `uv.lock` is committed and never edited by hand.
+- `.pre-commit-config.yaml` pins hook versions; keep the ruff hook `rev` equal to the ruff version in `uv.lock`.
+- `.github/workflows/ci.yml` runs the same `uv run` commands as local on pull requests and pushes to `main`. pytest exits non-zero when it collects no tests, so `tests/` must always contain at least one test or CI fails.
+- `main` is protected by the `Protect main` ruleset: pull request required, `Lint and tests` check required, no force pushes, no deletion.
 
 ## Workflow rules
 
-- Git history uses Conventional Commits (`chore:`, `feat:`, `fix:`, `docs:`, `test:`, `refactor:`). Work happens on branches and reaches `main` through Pull Requests.
-- The owner types all git write commands himself to learn them. Do not run `git add`, `commit`, `push`, `switch`, `merge` or `gh pr` for him; give the exact command and ask him to run it (suggest the `! ` prefix). Read-only commands (`status`, `log`, `diff`) are fine.
-- Reply in Spanish.
+- Conventional Commits (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`, `ci:`). Work happens on branches and reaches `main` through squash-merged Pull Requests.
+- Reply in Spanish, one concept per step and in short messages; the owner has said it is hard to keep up with long explanations.
+- By default the owner types git write commands to learn them: give the exact command and explain it. Read-only commands are fine to run. Run write commands only when the owner explicitly asks for that task.
 
 ## Mentoring format
 
-The owner is learning git, Python, pytest, Playwright, CI/CD, Azure DevOps release management and AI evals. After creating or changing anything, always explain: why, when it is used in real projects, and how to create it by hand. Interview questions must always include a broad, detailed answer.
+The owner is learning this stack. After creating or changing anything, explain why, when it is used in real projects, and how to create it by hand. Interview questions always include a broad, detailed answer.
 
 ## Learning notes
 
-`docs/learning/` stores what the owner learns (concepts, configuration, interview Q&A), one file per topic. When something relevant is created or explained, add it to the matching file and keep `docs/learning/README.md` as the index. Record significant project decisions in this file.
+`docs/learning/` stores what the owner learns, one file per topic, with `docs/learning/README.md` as the index. Add new concepts to the matching file.
 
-## Status
+## Plan
 
-- Done: repo, `main`, scaffold (uv, pytest, ruff, src layout, smoke test) via PR #1; CLAUDE.md and notes via PRs #2 and #3.
-- Done: `validators.py` as system under test, `make_user` factory fixture in `tests/conftest.py`, parametrized tests with ids and `smoke`/`regression` markers registered in `pyproject.toml` (PR #4, squash-merged). 18 tests pass.
-- Pending: uncommitted edit to `docs/learning/git.md` (merge methods example) and this file; goes in the next PR.
-- Owner currently uses GitHub Desktop plus the web; for now Claude runs git write commands for him (he asked for this temporarily) while explaining each one. Ask him before returning to "he types them".
-- Done (pending owner's commit/PR): pre-commit with ruff and basic hygiene hooks (`.pre-commit-config.yaml`, hook installed locally). Hooks are pinned (`rev`); keep the ruff hook version equal to the ruff version in `uv.lock`.
-- Done (pending owner's commit/PR): GitHub Actions workflow `.github/workflows/ci.yml` (ruff check, ruff format --check, pytest via `uv sync --locked`) on pull_request and push to main. Uses the same `uv run` commands as local so CI failures are reproducible.
-- Pre-commit PR (#6) is merged. For now the owner types git write commands himself again; give him the commands and explain each one.
-- Next: branch protection with required CI check, Azure Pipelines comparison, Playwright + Page Object Model, API tests, AI evals.
+- The owner will rewrite the tests from scratch while learning Playwright. Keep the infrastructure (uv, pre-commit, CI, ruleset). Replace `validators.py` and its tests only once a new test exists, so CI keeps collecting tests.
+- Next: demonstrate the ruleset with a deliberately failing PR, Python refresher, Playwright + Page Object Model against a real demo site, API tests, Azure Pipelines comparison, AI evals.
+- Before job applications start (around January 2027): move `docs/learning/` and the mentoring sections of this file to a private repo, then remove them from the public history (rewrite with the ruleset temporarily disabled, or publish a fresh repo).
