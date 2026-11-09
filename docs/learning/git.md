@@ -88,6 +88,16 @@ Métodos de merge en un PR:
 - **Squash:** junta todos los commits del PR en uno solo. Historial lineal y legible.
 - **Rebase:** reaplica los commits uno a uno sobre `main`, sin commit de unión.
 
+Ejemplo: tu rama tiene 3 commits (`feat: add validators`, `fix: typo`, `docs: notes`).
+
+| Método | Cómo queda `main` | Historial |
+|---|---|---|
+| Merge commit | Los 3 commits + 1 commit extra de unión ("Merge pull request #4") | Fiel pero con ruido y ramificado |
+| **Squash** | **1 solo commit** con todos los cambios (usa el título del PR) | Limpio: un commit por PR |
+| Rebase | Los 3 commits, uno detrás de otro, sin commit de unión | Lineal, conserva el detalle |
+
+En la web, el botón verde "Merge pull request" usa merge commit por defecto; la flecha a su lado permite elegir Squash o Rebase. Con la terminal se elige con `gh pr merge -m` (merge), `-s` (squash) o `-r` (rebase). Muchos equipos fijan un único método permitido en la configuración del repo para que todos los PRs queden igual.
+
 **Pregunta: ¿por qué hacer `git pull` en `main` antes de crear una rama?**
 Porque la rama nace desde donde estás. Si tu `main` local está desactualizado, tu rama parte de una base vieja y al abrir el PR aparecen conflictos o cambios ajenos mezclados con los tuyos. Con `git pull` partes del estado más reciente del equipo. Hábito base: sincronizar, crear la rama, trabajar, abrir el PR.
 
